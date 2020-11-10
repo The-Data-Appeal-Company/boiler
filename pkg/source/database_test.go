@@ -70,8 +70,7 @@ func TestDatabaseSource(t *testing.T) {
 		Headers: nil,
 	})
 
-	uri, err := reqs[0].Uri()
-	require.NoError(t, err)
+	uri := reqs[0].Uri()
 
 	require.Equal(t, "http://localhost:4321/test?param=1&param=2", uri.String() )
 }

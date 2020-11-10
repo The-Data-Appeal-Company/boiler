@@ -18,8 +18,7 @@ func TestRequestCreation(t *testing.T) {
 		Headers: map[string]string{},
 	}
 
-	reqUri, err := req.Uri()
-	require.NoError(t, err)
+	reqUri := req.Uri()
 
 	require.Equal(t, "http://localhost:1234/test?query=test_value_0&query=test_value_1", reqUri.String())
 	require.Equal(t, "GET", req.Method)
@@ -37,8 +36,7 @@ func TestRequestCreationWithoutPort(t *testing.T) {
 		Headers: map[string]string{},
 	}
 
-	reqUri, err := req.Uri()
-	require.NoError(t, err)
+	reqUri := req.Uri()
 
 	require.Equal(t, "http://localhost/test?query=test_value_0&query=test_value_1", reqUri.String())
 	require.Equal(t, "GET", req.Method)
@@ -52,8 +50,7 @@ func TestRequestCreationWithoutParams(t *testing.T) {
 		Path:   "/test",
 	}
 
-	reqUri, err := req.Uri()
-	require.NoError(t, err)
+	reqUri := req.Uri()
 
 	require.Equal(t, "http://localhost/test", reqUri.String())
 	require.Equal(t, "GET", req.Method)
@@ -66,8 +63,7 @@ func TestRequestCreationWithoutPath(t *testing.T) {
 		Host:   "localhost",
 	}
 
-	reqUri, err := req.Uri()
-	require.NoError(t, err)
+	reqUri := req.Uri()
 
 	require.Equal(t, "http://localhost", reqUri.String())
 	require.Equal(t, "GET", req.Method)
@@ -83,9 +79,7 @@ func TestRequestCreationWithoutPathWithParams(t *testing.T) {
 		},
 	}
 
-	reqUri, err := req.Uri()
-	require.NoError(t, err)
-
+	reqUri := req.Uri()
 	require.Equal(t, "http://localhost?query=test_value_0&query=test_value_1", reqUri.String())
 	require.Equal(t, "GET", req.Method)
 }

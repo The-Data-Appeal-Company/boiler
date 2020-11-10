@@ -1,6 +1,9 @@
 package requests
 
-import "net/url"
+import (
+	"fmt"
+	"net/url"
+)
 
 type Request struct {
 	Method       string
@@ -22,7 +25,7 @@ func FromUrl(u *url.URL, method string) Request {
 	}
 }
 
-func (r Request) Uri() (*url.URL, error) {
+func (r Request) Uri() *url.URL {
 	u := &url.URL{
 		Scheme: r.Scheme,
 		Host:   r.Host,
@@ -38,5 +41,9 @@ func (r Request) Uri() (*url.URL, error) {
 
 	u.RawQuery = q.Encode()
 
-	return u, nil
+	return u
+}
+
+func (r Request) String() interface{} {
+	return fmt.Sprintf("%s %s", r.Method, r.Uri().String())
 }
