@@ -7,6 +7,20 @@ import (
 	"time"
 )
 
+func TestCommonGetMapStringString(t *testing.T) {
+	var data = map[string]interface{}{
+		"test": map[string]string{
+			"test": "test",
+		},
+	}
+
+	val, err := getMapStringString(data, "test")
+	require.NoError(t, err)
+	require.Equal(t, map[string]string{
+		"test": "test",
+	}, val)
+}
+
 func TestCommonGetDuration(t *testing.T) {
 	var data = map[string]interface{}{
 		"test": "3s",

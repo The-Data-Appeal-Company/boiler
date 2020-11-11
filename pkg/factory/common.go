@@ -11,6 +11,20 @@ var (
 	ErrInvalidType   = errors.New("invalid key value type")
 )
 
+func getMapStringString(m map[string]interface{}, key string) (map[string]string, error) {
+	rawValue, present := m[key]
+	if !present {
+		return nil, fmt.Errorf("%w: %s", ErrKeyNotPresent, key)
+	}
+
+	value, isStr := rawValue.(map[string]string)
+	if !isStr {
+		return nil, fmt.Errorf("%w: %s", ErrInvalidType, key)
+	}
+
+	return value, nil
+}
+
 func getDuration(m map[string]interface{}, key string) (time.Duration, error) {
 	rawValue, present := m[key]
 	if !present {
