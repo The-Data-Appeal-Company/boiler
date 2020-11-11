@@ -1,0 +1,30 @@
+package controller
+
+import (
+	"boiler/pkg/requests"
+	"net/http"
+	"time"
+)
+
+type HttpExecutorConfig struct {
+	Timeout time.Duration
+}
+
+type HttpRequestExecutor struct {
+	client *http.Client
+	config HttpExecutorConfig
+}
+
+func NewHttpRequestExecutor(config HttpExecutorConfig) HttpRequestExecutor {
+	return HttpRequestExecutor{
+		config: config,
+		client: &http.Client{
+			Timeout: config.Timeout,
+		},
+	}
+}
+
+func (h HttpRequestExecutor) Execute(request requests.Request) error {
+	panic("implement me")
+}
+
