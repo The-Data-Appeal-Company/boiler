@@ -46,8 +46,7 @@ func (h *HttpRequestExecutor) Execute(request requests.Request) error {
 		return err
 	}
 
-	if resp.StatusCode != 200 {
-		return fmt.Errorf("server response is %s: ", resp.Status)
-	}
+	fmt.Printf("%d - %s\n", resp.StatusCode, request.Uri().String())
+
 	return nil
 }
