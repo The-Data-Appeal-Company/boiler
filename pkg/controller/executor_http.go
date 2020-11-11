@@ -46,15 +46,11 @@ func (h *HttpRequestExecutor) Execute(request requests.Request) error {
 	}
 	resp, err := h.client.Do(httpReq)
 
-	if err != nil {
-		if h.config.ContinueOnError {
-			return err
-		}
-		return nil
+	if err != nil && !h.config.ContinueOnError {
+		return err
 	}
 
-	if resp.StatusCode != 200 && !h.config.ContinueOnError {
-		return fmt.Errorf("server response is %s: ", resp.Status)
-	}
+	fmt.Printf("%d - %s\n", resp.StatusCode, request.Uri().String())
+
 	return nil
 }

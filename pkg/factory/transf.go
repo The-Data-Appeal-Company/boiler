@@ -10,6 +10,10 @@ func CreateTransformation(model conf.TransformationModel) (transformation.Transf
 	switch model.Type {
 	case transformation.TransformationRelativeDateShift:
 		return createTransformationRelativeDateShift(model)
+	case transformation.TransformRemoveQueryParams:
+		return createTransformationRemoveQueryParams(model)
+	case transformation.TransformRewriteHost:
+		return createTransformationRewriteHost(model)
 	default:
 		return nil, fmt.Errorf("no transformation found for type: %s", model.Type)
 	}

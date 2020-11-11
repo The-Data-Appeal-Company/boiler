@@ -4,6 +4,7 @@ go 1.15
 
 require (
 	github.com/go-sql-driver/mysql v1.5.0 // indirect
+	github.com/lib/pq v1.0.0
 	github.com/mattn/go-sqlite3 v1.14.4 // indirect
 	github.com/onsi/ginkgo v1.14.2 // indirect
 	github.com/onsi/gomega v1.10.3 // indirect

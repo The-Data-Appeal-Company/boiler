@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestRemoveFiltersTransform(t *testing.T) {
+func TestRewriteHost(t *testing.T) {
 	req := requests.Request{
 		Method: "GET",
 		Scheme: "http",
@@ -16,13 +16,15 @@ func TestRemoveFiltersTransform(t *testing.T) {
 		},
 	}
 
-	transformed, err := NewRemoveFilters().Apply(req)
+	const newHost = "127.0.0.1:8888"
+	transformed, err := NewRewriteHostTransform(RewriteHostTransformConfiguration{
+		Host: newHost,
+	}).Apply(req)
 	require.NoError(t, err)
 
-	require.Equal(t, req.Host, transformed.Host)
+	require.Equal(t, newHost, transformed.Host)
 	require.Equal(t, req.Scheme, transformed.Scheme)
 	require.Equal(t, req.Method, transformed.Method)
-	require.NotEqual(t, req.Params, transformed.Params)
+	require.Equal(t, req.Params, transformed.Params)
 
-	require.Empty(t, transformed.Params)
 }

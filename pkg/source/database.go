@@ -6,6 +6,8 @@ import (
 	"database/sql"
 	"fmt"
 	"net/url"
+
+	_ "github.com/lib/pq"
 )
 
 const (
@@ -125,10 +127,15 @@ func getString(values map[string]interface{}, key string) (string, error) {
 		return "", fmt.Errorf("database url column not present in response row: %s", key)
 	}
 
-	rawUrlStr, isStr := rawUrl.([]byte)
-	if !isStr {
-		return "", fmt.Errorf("row value for column %s must be a string", key)
+	rawUrlByteArr, isByteArr := rawUrl.([]byte)
+	if isByteArr {
+		return string(rawUrlByteArr), nil
 	}
 
-	return string(rawUrlStr), nil
+	rawUrlStr, isStr := rawUrl.(string)
+	if isStr {
+		return rawUrlStr, nil
+	}
+
+	return "", fmt.Errorf("invalid type for column %s must be string | []byte", key)
 }
