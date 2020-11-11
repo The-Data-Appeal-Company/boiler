@@ -10,7 +10,7 @@ import (
 )
 
 func TestController(t *testing.T) {
-	req, err := requests.FromStr("http//localhost:4321?test=true", "GET")
+	req, err := requests.FromStr("http//localhost:4321/test?test=true", "GET")
 
 	requestExecutor := NewMockRequestExecutor()
 
@@ -32,6 +32,10 @@ func TestController(t *testing.T) {
 	require.Len(t, requestExecutor.requests, 3)
 	for _, r := range requestExecutor.requests {
 		require.Empty(t, r.Params)
+		require.Equal(t, r.Host, req.Host)
+		require.Equal(t, r.Path, req.Path)
+		require.Equal(t, r.Scheme, req.Scheme)
 	}
+
 
 }
