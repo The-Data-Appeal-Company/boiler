@@ -6,7 +6,7 @@ import (
 )
 
 func createTransformationRemoveQueryParams(model conf.TransformationModel) (transformation.Transformation, error) {
-	config, err := createRemoveQueryConfiguration(model)
+	config, err := createTransformationRemoveQueryParamsConfiguration(model)
 	if err != nil {
 		return nil, err
 	}
@@ -14,7 +14,7 @@ func createTransformationRemoveQueryParams(model conf.TransformationModel) (tran
 	return transformation.NewRemoveFilters(config), nil
 }
 
-func createRemoveQueryConfiguration(model conf.TransformationModel) (transformation.RemoveQueryParamsTransformConfiguration, error) {
+func createTransformationRemoveQueryParamsConfiguration(model conf.TransformationModel) (transformation.RemoveQueryParamsTransformConfiguration, error) {
 	targetFields, err := getStringArray(model.Params, "fields")
 	if err != nil {
 		return transformation.RemoveQueryParamsTransformConfiguration{}, err
