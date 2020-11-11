@@ -13,7 +13,11 @@ func TestHttpExecutor(t *testing.T) {
 	var serverRequests = make([]requests.Request, 0)
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		req := requests.FromUrl(r.URL, r.Method)
+		req, err := requests.FromUrl(r.URL, r.Method)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 		serverRequests = append(serverRequests, req)
 
 		w.WriteHeader(http.StatusOK)

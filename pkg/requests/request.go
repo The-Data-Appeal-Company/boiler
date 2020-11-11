@@ -5,14 +5,37 @@ import (
 	"net/url"
 )
 
+type HttpMethod string
+
+const (
+	GET  HttpMethod = "GET"
+	POST HttpMethod = "POST"
+)
+
+type Body struct {
+	ContentType string
+	Content     string
+}
+
 type Request struct {
-	Method       string
+	Method       HttpMethod
 	Scheme       string
 	Host         string
 	Path         string
 	Params       map[string][]string
 	Headers      map[string]string
+	Body         Body
 	SourceParams map[string]interface{}
+}
+
+func HttpMethodFromString(method string) (HttpMethod, error) {
+	switch method {
+	case "GET":
+		return GET, nil
+	case "POST":
+		return POST, nil
+	}
+	return "", fmt.Errorf("method %s not supported", method)
 }
 
 func FromStr(u string, method string) (Request, error) {
@@ -21,17 +44,21 @@ func FromStr(u string, method string) (Request, error) {
 		return Request{}, err
 	}
 
-	return FromUrl(uri, method), nil
+	return FromUrl(uri, method)
 }
 
-func FromUrl(u *url.URL, method string) Request {
+func FromUrl(u *url.URL, method string) (Request, error) {
+	m, err := HttpMethodFromString(method)
+	if err != nil {
+		return Request{}, err
+	}
 	return Request{
-		Method: method,
+		Method: m,
 		Scheme: u.Scheme,
 		Host:   u.Host,
 		Path:   u.Path,
 		Params: u.Query(),
-	}
+	}, nil
 }
 
 func (r Request) Uri() *url.URL {

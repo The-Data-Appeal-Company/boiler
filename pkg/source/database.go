@@ -110,7 +110,10 @@ func (d Database) createRequest(values map[string]interface{}) (requests.Request
 		return requests.Request{}, err
 	}
 
-	req := requests.FromUrl(uri, httpMethod)
+	req, err := requests.FromUrl(uri, httpMethod)
+	if err != nil {
+		return requests.Request{}, err
+	}
 	req.SourceParams = values
 
 	return req, nil
