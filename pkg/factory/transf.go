@@ -14,6 +14,8 @@ func CreateTransformation(model conf.TransformationModel) (transformation.Transf
 		return createTransformationRemoveQueryParams(model)
 	case transformation.TransformRewriteHost:
 		return createTransformationRewriteHost(model)
+	case transformation.TransformWriteHeader:
+		return createTransformationWriteHeader(model)
 	default:
 		return nil, fmt.Errorf("no transformation found for type: %s", model.Type)
 	}
