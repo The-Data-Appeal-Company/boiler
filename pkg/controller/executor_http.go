@@ -8,6 +8,8 @@ import (
 	"time"
 )
 
+const RequestExecutorHttp string = "http"
+
 type HttpExecutorConfig struct {
 	Timeout         time.Duration
 	Concurrency     int
