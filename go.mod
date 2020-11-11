@@ -10,4 +10,5 @@ require (
 	github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244
 	github.com/stretchr/testify v1.6.1
 	github.com/ziutek/mymysql v1.5.4 // indirect
+	gopkg.in/yaml.v2 v2.3.0
 )

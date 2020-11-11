@@ -8,6 +8,9 @@ import (
 	"net/url"
 )
 
+const (
+	SourceDatabase = "database"
+)
 
 type DatabaseSourceConfiguration struct {
 	Connection struct {

@@ -7,6 +7,10 @@ import (
 	"time"
 )
 
+
+const (
+	TransformationRelativeDateShift = "RelativeDateShiftTransformation"
+)
 type RelativeDateShiftConfiguration struct {
 	TargetFields   []string
 	RelativeTo     string

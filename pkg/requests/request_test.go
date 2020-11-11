@@ -99,4 +99,6 @@ func TestRequestCreationFromUrl(t *testing.T) {
 
 	require.Equal(t, []string{"1"}, req.Params["param1"])
 	require.Equal(t, []string{"2", "3"}, req.Params["param2"])
+
+
 }
