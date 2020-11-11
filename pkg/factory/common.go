@@ -30,6 +30,12 @@ func getStringArray(m map[string]interface{}, key string) ([]string, error) {
 		return nil, fmt.Errorf("%w: %s", ErrKeyNotPresent, key)
 	}
 
+	// if we already have a string array we can just cast and return
+	valueStr, isStrArr := rawValue.([]string)
+	if isStrArr {
+		return valueStr, nil
+	}
+
 	value, isArr := rawValue.([]interface{})
 	if !isArr {
 		return nil, fmt.Errorf("%w: %s", ErrInvalidType, key)
