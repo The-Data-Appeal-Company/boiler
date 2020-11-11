@@ -20,7 +20,7 @@ func NewWriteHeaderTransform(config WriteHeaderTransformConfiguration) WriteHead
 
 func (r WriteHeaderTransform) Apply(request requests.Request) (requests.Request, error) {
 	for name, value := range r.config.Headers{
-		request.Headers[name] = value
+		request.Headers[name] = []string{value}
 	}
 	return request, nil
 }

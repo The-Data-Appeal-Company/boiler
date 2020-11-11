@@ -17,7 +17,9 @@ func TestController(t *testing.T) {
 	src := source.NewMockSource(req, req, req)
 
 	transformations := []transformation.Transformation{
-		transformation.NewRemoveFilters(),
+		transformation.NewRemoveQueryFilters(transformation.RemoveQueryParamsTransformConfiguration{
+			Fields: []string{"test"},
+		}),
 	}
 
 	contrl := Controller{
@@ -36,6 +38,5 @@ func TestController(t *testing.T) {
 		require.Equal(t, r.Path, req.Path)
 		require.Equal(t, r.Scheme, req.Scheme)
 	}
-
 
 }

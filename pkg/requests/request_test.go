@@ -8,43 +8,43 @@ import (
 
 func TestRequestCreation(t *testing.T) {
 	req := Request{
-		Method: "GET",
+		Method: GET,
 		Scheme: "http",
 		Host:   "localhost:1234",
 		Path:   "/test",
 		Params: map[string][]string{
 			"query": {"test_value_0", "test_value_1"},
 		},
-		Headers: map[string]string{},
+		Headers: map[string][]string{},
 	}
 
 	reqUri := req.Uri()
 
 	require.Equal(t, "http://localhost:1234/test?query=test_value_0&query=test_value_1", reqUri.String())
-	require.Equal(t, "GET", req.Method)
+	require.Equal(t, GET, req.Method)
 }
 
 func TestRequestCreationWithoutPort(t *testing.T) {
 	req := Request{
-		Method: "GET",
+		Method: GET,
 		Scheme: "http",
 		Host:   "localhost",
 		Path:   "/test",
 		Params: map[string][]string{
 			"query": {"test_value_0", "test_value_1"},
 		},
-		Headers: map[string]string{},
+		Headers: map[string][]string{},
 	}
 
 	reqUri := req.Uri()
 
 	require.Equal(t, "http://localhost/test?query=test_value_0&query=test_value_1", reqUri.String())
-	require.Equal(t, "GET", req.Method)
+	require.Equal(t, GET, req.Method)
 }
 
 func TestRequestCreationWithoutParams(t *testing.T) {
 	req := Request{
-		Method: "GET",
+		Method: GET,
 		Scheme: "http",
 		Host:   "localhost",
 		Path:   "/test",
@@ -53,12 +53,12 @@ func TestRequestCreationWithoutParams(t *testing.T) {
 	reqUri := req.Uri()
 
 	require.Equal(t, "http://localhost/test", reqUri.String())
-	require.Equal(t, "GET", req.Method)
+	require.Equal(t, GET, req.Method)
 }
 
 func TestRequestCreationWithoutPath(t *testing.T) {
 	req := Request{
-		Method: "GET",
+		Method: GET,
 		Scheme: "http",
 		Host:   "localhost",
 	}
@@ -66,12 +66,12 @@ func TestRequestCreationWithoutPath(t *testing.T) {
 	reqUri := req.Uri()
 
 	require.Equal(t, "http://localhost", reqUri.String())
-	require.Equal(t, "GET", req.Method)
+	require.Equal(t, GET, req.Method)
 }
 
 func TestRequestCreationWithoutPathWithParams(t *testing.T) {
 	req := Request{
-		Method: "GET",
+		Method: GET,
 		Scheme: "http",
 		Host:   "localhost",
 		Params: map[string][]string{
@@ -81,7 +81,7 @@ func TestRequestCreationWithoutPathWithParams(t *testing.T) {
 
 	reqUri := req.Uri()
 	require.Equal(t, "http://localhost?query=test_value_0&query=test_value_1", reqUri.String())
-	require.Equal(t, "GET", req.Method)
+	require.Equal(t, GET, req.Method)
 }
 
 func TestRequestCreationFromUrl(t *testing.T) {
