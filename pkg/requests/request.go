@@ -15,6 +15,15 @@ type Request struct {
 	SourceParams map[string]interface{}
 }
 
+func FromStr(u string, method string) (Request, error) {
+	uri, err := url.Parse(u)
+	if err != nil {
+		return Request{}, err
+	}
+
+	return FromUrl(uri, method), nil
+}
+
 func FromUrl(u *url.URL, method string) Request {
 	return Request{
 		Method: method,

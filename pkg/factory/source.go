@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-func createSource(model conf.SourceModel) (source.Source, error) {
+func CreateSource(model conf.SourceModel) (source.Source, error) {
 	switch model.Type {
 	case source.SourceDatabase:
 		return createSourceDatabase(model)
