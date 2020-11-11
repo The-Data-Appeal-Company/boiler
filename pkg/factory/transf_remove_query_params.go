@@ -11,7 +11,7 @@ func createTransformationRemoveQueryParams(model conf.TransformationModel) (tran
 		return nil, err
 	}
 
-	return transformation.NewRemoveFilters(config), nil
+	return transformation.NewRemoveQueryFilters(config), nil
 }
 
 func createTransformationRemoveQueryParamsConfiguration(model conf.TransformationModel) (transformation.RemoveQueryParamsTransformConfiguration, error) {

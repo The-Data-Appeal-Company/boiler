@@ -4,7 +4,7 @@ import (
 	"boiler/pkg/requests"
 )
 
-const TransformRemoveQueryParams = "RemoveFilters"
+const TransformRemoveQueryParams = "remove-query-params"
 
 type RemoveQueryParamsTransformConfiguration struct {
 	Fields []string
@@ -14,7 +14,7 @@ type RemoveQueryParamsTransform struct {
 	config RemoveQueryParamsTransformConfiguration
 }
 
-func NewRemoveFilters(config RemoveQueryParamsTransformConfiguration) RemoveQueryParamsTransform {
+func NewRemoveQueryFilters(config RemoveQueryParamsTransformConfiguration) RemoveQueryParamsTransform {
 	return RemoveQueryParamsTransform{
 		config: config,
 	}

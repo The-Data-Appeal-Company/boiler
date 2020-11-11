@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestCreateRemoveQueryParams(t *testing.T) {
+func TestCreateRemoveQueryParamsTransformConfiguration(t *testing.T) {
 	config, err := createTransformationRemoveQueryParamsConfiguration(conf.TransformationModel{
 		Type: transformation.TransformRemoveQueryParams,
 		Params: map[string]interface{}{
