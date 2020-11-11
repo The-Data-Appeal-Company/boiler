@@ -3,6 +3,7 @@ package requests
 import (
 	"fmt"
 	"net/url"
+	"strings"
 )
 
 type HttpMethod string
@@ -12,24 +13,19 @@ const (
 	POST HttpMethod = "POST"
 )
 
-type Body struct {
-	ContentType string
-	Content     string
-}
-
 type Request struct {
 	Method       HttpMethod
 	Scheme       string
 	Host         string
 	Path         string
 	Params       map[string][]string
-	Headers      map[string]string
-	Body         Body
+	Headers      map[string][]string
+	Body         string
 	SourceParams map[string]interface{}
 }
 
 func HttpMethodFromString(method string) (HttpMethod, error) {
-	switch method {
+	switch strings.ToUpper(method) {
 	case "GET":
 		return GET, nil
 	case "POST":
