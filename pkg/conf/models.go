@@ -3,7 +3,7 @@ package conf
 type Config struct {
 	Source               SourceModel           `json:"source" yaml:"source"`
 	Transformations      []TransformationModel `json:"transformations" yaml:"transformations"`
-	RequestExecutorModel RequestExecutorModel  `json:"request_executor_model" yaml:"request_executor_model"`
+	RequestExecutorModel RequestExecutorModel  `json:"executor" yaml:"executor"`
 }
 
 type RequestExecutorModel struct {

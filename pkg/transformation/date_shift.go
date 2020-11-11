@@ -7,10 +7,10 @@ import (
 	"time"
 )
 
-
 const (
 	TransformationRelativeDateShift = "relative-time-shift"
 )
+
 type RelativeDateShiftConfiguration struct {
 	TargetFields   []string
 	RelativeTo     string
@@ -27,12 +27,7 @@ func NewDateShift(conf RelativeDateShiftConfiguration) RelativeDateShiftTransfor
 }
 
 func (r RelativeDateShiftTransformation) Apply(request requests.Request) (requests.Request, error) {
-	date, err := valueOrResolveParam(r.conf.RelativeTo, request)
-	if err != nil {
-		return requests.Request{}, err
-	}
-
-	relative, err := time.Parse(r.conf.DateFormat, date)
+	relative, err := r.parseOrResolveParamTime(r.conf.RelativeTo, r.conf.DateFormat, request)
 	if err != nil {
 		return requests.Request{}, err
 	}
@@ -72,25 +67,31 @@ func truncDay(val time.Time) time.Time {
 	return time.Date(val.Year(), val.Month(), val.Day(), 0, 0, 0, 0, val.Location())
 }
 
-func valueOrResolveParam(key string, req requests.Request) (string, error) {
+func (r RelativeDateShiftTransformation) parseOrResolveParamTime(key string, layout string, req requests.Request) (time.Time, error) {
 	if isVariable(key) {
-		return getString(req.SourceParams, key[1:])
+		return r.getTime(req.SourceParams, key[1:])
 	}
-	return key, nil
+
+	return time.Parse(layout, key)
 }
 
-func getString(values map[string]interface{}, key string) (string, error) {
+func (r RelativeDateShiftTransformation) getTime(values map[string]interface{}, key string) (time.Time, error) {
 	rawUrl, present := values[key]
 	if !present {
-		return "", fmt.Errorf("variable not present in source params: %s", key)
+		return time.Time{}, fmt.Errorf("variable not present in source params: %s", key)
 	}
 
-	rawUrlStr, isStr := rawUrl.(string)
-	if !isStr {
-		return "", fmt.Errorf("value for source param %s must be a string", key)
+	tim, isTime := rawUrl.(time.Time)
+	if isTime {
+		return tim, nil
 	}
 
-	return rawUrlStr, nil
+	str, isStr := rawUrl.(string)
+	if isStr {
+		return time.Parse(r.conf.DateFormat, str)
+	}
+
+	return time.Time{}, fmt.Errorf("value for source param %s must be a time.Time or string compatible with %s layout", key, r.conf.DateFormat)
 }
 
 func isVariable(val string) bool {

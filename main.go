@@ -10,7 +10,7 @@ import (
 
 func main() {
 	var configPath string
-	flag.StringVar(&configPath, "config-path", "config.yml", "config file path")
+	flag.StringVar(&configPath, "config", "config.yml", "config file path")
 	flag.Parse()
 
 	config, err := conf.NewFileReader(configPath).ReadConf()

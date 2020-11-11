@@ -88,7 +88,8 @@ func TestRequestCreationFromUrl(t *testing.T) {
 	testUrl, err := url.Parse("http://localhost:4321/test?param1=1&param2=2&param2=3")
 	require.NoError(t, err)
 
-	req := FromUrl(testUrl, "GET")
+	req, err := FromUrl(testUrl, "GET")
+	require.NoError(t, err)
 
 	require.Equal(t, "localhost:4321", req.Host)
 	require.Equal(t, "http", req.Scheme)
@@ -99,6 +100,5 @@ func TestRequestCreationFromUrl(t *testing.T) {
 
 	require.Equal(t, []string{"1"}, req.Params["param1"])
 	require.Equal(t, []string{"2", "3"}, req.Params["param2"])
-
 
 }
