@@ -7,7 +7,9 @@ import (
 )
 
 type HttpExecutorConfig struct {
-	Timeout time.Duration
+	Timeout         time.Duration
+	Concurrency     int
+	ContinueOnError bool
 }
 
 type HttpRequestExecutor struct {
@@ -18,6 +20,7 @@ type HttpRequestExecutor struct {
 func NewHttpRequestExecutor(config HttpExecutorConfig) HttpRequestExecutor {
 	return HttpRequestExecutor{
 		config: config,
+
 		client: &http.Client{
 			Timeout: config.Timeout,
 		},
@@ -27,4 +30,3 @@ func NewHttpRequestExecutor(config HttpExecutorConfig) HttpRequestExecutor {
 func (h HttpRequestExecutor) Execute(request requests.Request) error {
 	panic("implement me")
 }
-
