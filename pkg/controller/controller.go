@@ -19,13 +19,15 @@ type Config struct {
 type Controller struct {
 	source          source.Source
 	transformations []transformation.Transformation
+	executor        Executor
 	config          Config
 }
 
-func NewController(source source.Source, transformations []transformation.Transformation, config Config) Controller {
+func NewController(source source.Source, transformations []transformation.Transformation, executor Executor, config Config) Controller {
 	return Controller{
 		source:          source,
 		transformations: transformations,
+		executor:        executor,
 		config:          config,
 	}
 }
@@ -35,11 +37,10 @@ func (c Controller) Execute(parentCtx context.Context) error {
 	ctx, cancel := context.WithCancel(parentCtx)
 	errGrp, ctx := errgroup.WithContext(ctx)
 	for i := 0; i < c.config.Concurrency; i++ {
-		executor := NewHttpExecutor(c.config.Timeout)
 		errGrp.Go(func() error {
 			for request := range reqsChan {
 				fmt.Println("EXE req")
-				err := executor.Execute(request)
+				err := c.executor.Execute(request)
 				if err != nil && !c.config.ContinueOnError {
 					cancel()
 					return err
