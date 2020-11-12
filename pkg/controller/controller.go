@@ -6,11 +6,17 @@ import (
 	"boiler/pkg/transformation"
 	"context"
 	"golang.org/x/sync/errgroup"
+	"time"
 )
+
+type BudgetConfig struct {
+	TimeBudget time.Duration
+}
 
 type Config struct {
 	Concurrency     int
 	ContinueOnError bool
+	Budget          BudgetConfig
 }
 
 type Controller struct {
@@ -31,7 +37,16 @@ func NewController(source source.Source, transformations []transformation.Transf
 
 func (c Controller) Execute(parentCtx context.Context) error {
 	reqsChan := make(chan requests.Request, c.config.Concurrency)
+
+	var cancel func()
+	if c.config.Budget.TimeBudget != 0 {
+		parentCtx, cancel = context.WithTimeout(parentCtx, c.config.Budget.TimeBudget)
+		defer cancel()
+	}
+
 	ctx, cancel := context.WithCancel(parentCtx)
+	defer cancel()
+
 	errGrp, ctx := errgroup.WithContext(ctx)
 	for i := 0; i < c.config.Concurrency; i++ {
 		errGrp.Go(func() error {

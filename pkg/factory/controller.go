@@ -4,6 +4,7 @@ import (
 	"boiler/pkg/conf"
 	"boiler/pkg/controller"
 	"boiler/pkg/transformation"
+	"time"
 )
 
 func CreateController(config conf.Config) (controller.Controller, error) {
@@ -36,8 +37,16 @@ func CreateController(config conf.Config) (controller.Controller, error) {
 }
 
 func createControllerConfig(config conf.Config) (controller.Config, error) {
+	timeBudget, err := time.ParseDuration(config.RequestExecutorModel.Budget.Time)
+	if err != nil {
+		return controller.Config{}, err
+	}
+
 	return controller.Config{
 		Concurrency:     config.RequestExecutorModel.Concurrency,
 		ContinueOnError: config.RequestExecutorModel.ContinueOnError,
+		Budget: controller.BudgetConfig{
+			TimeBudget: timeBudget,
+		},
 	}, nil
 }

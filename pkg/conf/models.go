@@ -6,11 +6,16 @@ type Config struct {
 	RequestExecutorModel RequestExecutorModel  `json:"executor" yaml:"executor"`
 }
 
+type RequestExecutorBudgetModel struct {
+	Time string `json:"time"`
+}
+
 type RequestExecutorModel struct {
-	Type            string                 `json:"type" yaml:"type"`
-	Concurrency     int                    `json:"concurrency"`
-	ContinueOnError bool                   `json:"continue_on_error"`
-	Params          map[string]interface{} `json:"params" yaml:"params"`
+	Type            string                     `json:"type" yaml:"type"`
+	Concurrency     int                        `json:"concurrency"`
+	ContinueOnError bool                       `json:"continue_on_error"`
+	Budget          RequestExecutorBudgetModel `json:"budget"`
+	Params          map[string]interface{}     `json:"params" yaml:"params"`
 }
 
 type SourceModel struct {
