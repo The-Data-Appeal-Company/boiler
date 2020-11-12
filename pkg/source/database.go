@@ -34,24 +34,24 @@ func NewDatabase(conf DatabaseSourceConfiguration) Database {
 	return Database{conf: conf}
 }
 
-func (d Database) Requests(ctx context.Context, f func(requests.Request) error) error {
+func (d Database) Requests(ctx context.Context) ([]requests.Request, error) {
 	db, err := sql.Open(d.conf.Connection.Driver, d.conf.Connection.Uri)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	defer db.Close()
 
 	rows, err := db.QueryContext(ctx, d.conf.Extraction.Query)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	defer rows.Close()
 
 	columns, err := rows.Columns()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	var pointers = make([]interface{}, len(columns))
@@ -60,11 +60,12 @@ func (d Database) Requests(ctx context.Context, f func(requests.Request) error) 
 		pointers[i] = &ii
 	}
 
+	var requestSlice = make([]requests.Request, 0)
 	for rows.Next() {
 		// We may need to create a slice of pointers to interface{} here
 		// better add some unit tests
 		if err := rows.Scan(pointers...); err != nil {
-			return err
+			return nil, err
 		}
 
 		var namedValues = make(map[string]interface{})
@@ -75,25 +76,23 @@ func (d Database) Requests(ctx context.Context, f func(requests.Request) error) 
 
 		req, err := d.createRequest(namedValues)
 		if err != nil {
-			return err
+			return nil, err
 		}
 
-		if err := f(req); err != nil {
-			return err
-		}
+		requestSlice = append(requestSlice, req)
 	}
 
 	err = rows.Close()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// Rows.Err will report the last error encountered by Rows.Scan.
 	if err := rows.Err(); err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return requestSlice, nil
 }
 
 func (d Database) createRequest(values map[string]interface{}) (requests.Request, error) {

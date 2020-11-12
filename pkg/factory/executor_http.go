@@ -5,35 +5,20 @@ import (
 	"boiler/pkg/controller"
 )
 
-func createHttpExecutor(model conf.RequestExecutorModel) (controller.RequestExecutor, error) {
+func createHttpExecutor(model conf.RequestExecutorModel) (controller.Executor, error) {
 	config, err := createHttpExecutorConfig(model)
 	if err != nil {
 		return nil, err
 	}
 
-	return controller.NewHttpRequestExecutor(config), nil
+	return controller.NewHttpExecutor(config), nil
 }
 
-func createHttpExecutorConfig(model conf.RequestExecutorModel) (controller.HttpExecutorConfig, error) {
+func createHttpExecutorConfig(model conf.RequestExecutorModel) (controller.HttpExecutorConfiguration, error) {
 	timeout, err := getDuration(model.Params, "timeout")
 	if err != nil {
-		return controller.HttpExecutorConfig{}, err
+		return controller.HttpExecutorConfiguration{}, err
 	}
 
-	concurrency, err := getInt(model.Params, "concurrency")
-	if err != nil {
-		return controller.HttpExecutorConfig{}, err
-	}
-
-	continueOnErr, err := getBool(model.Params, "continue_on_error")
-	if err != nil {
-		return controller.HttpExecutorConfig{}, err
-	}
-
-	config := controller.HttpExecutorConfig{
-		Timeout:         timeout,
-		Concurrency:     concurrency,
-		ContinueOnError: continueOnErr,
-	}
-	return config, nil
+	return controller.HttpExecutorConfiguration{Timeout: timeout}, nil
 }

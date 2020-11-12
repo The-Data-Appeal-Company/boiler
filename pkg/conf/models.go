@@ -7,8 +7,10 @@ type Config struct {
 }
 
 type RequestExecutorModel struct {
-	Type   string                 `json:"type" yaml:"type"`
-	Params map[string]interface{} `json:"params" yaml:"params"`
+	Type            string                 `json:"type" yaml:"type"`
+	Concurrency     int                    `json:"concurrency"`
+	ContinueOnError bool                   `json:"continue_on_error"`
+	Params          map[string]interface{} `json:"params" yaml:"params"`
 }
 
 type SourceModel struct {

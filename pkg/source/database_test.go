@@ -44,13 +44,8 @@ func TestDatabaseSource(t *testing.T) {
 	}
 
 	source := NewDatabase(config)
-
-	reqs := make([]requests.Request, 0)
-
-	err = source.Requests(context.TODO(), func(request requests.Request) error {
-		reqs = append(reqs, request)
-		return nil
-	})
+ 
+	reqs, err := source.Requests(context.TODO())
 	require.NoError(t, err)
 
 	require.Len(t, reqs, 1)
