@@ -1,4 +1,4 @@
 vendor/
 .idea/
-examples/prod-*
+examples/prod*
 boiler
