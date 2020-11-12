@@ -9,23 +9,7 @@ import (
 	"time"
 )
 
-type HttpWorker interface {
-	Work(request requests.Request) error
-}
-
-type FastHttpWorker struct {
-	client *http.Client
-}
-
-func NewFastHttpWorker(timeout time.Duration) *FastHttpWorker {
-	return &FastHttpWorker{
-		client: &http.Client{
-			Timeout: timeout,
-		},
-	}
-}
-
-func (f *FastHttpWorker) Work(request requests.Request) error {
+func (f *HttpExecutor) Execute(request requests.Request) error {
 	uri := request.Uri()
 	httpReq := &http.Request{
 		URL:    uri,
@@ -48,4 +32,16 @@ func (f *FastHttpWorker) Work(request requests.Request) error {
 		return fmt.Errorf("http call status: %s", resp.Status)
 	}
 	return nil
+}
+
+type HttpExecutor struct {
+	client *http.Client
+}
+
+func NewHttpExecutor(timeout time.Duration) *HttpExecutor {
+	return &HttpExecutor{
+		client: &http.Client{
+			Timeout: timeout,
+		},
+	}
 }

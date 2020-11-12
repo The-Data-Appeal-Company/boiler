@@ -2,7 +2,6 @@ package controller
 
 import (
 	"boiler/pkg/requests"
-	"context"
 )
 
 type MockRequestExecutor struct {
@@ -13,13 +12,7 @@ func NewMockRequestExecutor() *MockRequestExecutor {
 	return &MockRequestExecutor{requests: make([]requests.Request, 0)}
 }
 
-func (m *MockRequestExecutor) Execute(ctx context.Context) error {
-	return nil
-}
-
-func (m *MockRequestExecutor) Feed(request requests.Request) {
-	m.requests = append(m.requests, request)
-}
-func (m *MockRequestExecutor) Stop() error {
+func (m *MockRequestExecutor) Execute(req requests.Request) error {
+	m.requests = append(m.requests, req)
 	return nil
 }

@@ -20,8 +20,8 @@ func TestMockRequestExecutor(t *testing.T) {
 		Host:   "localhost:4326",
 	}
 
-	executor.Feed(req1)
-	executor.Feed(req2)
+	require.NoError(t, executor.Execute(req1))
+	require.NoError(t, executor.Execute(req2))
 
 	require.Len(t, executor.requests, 2)
 

@@ -13,11 +13,6 @@ func NewMockSource(reqs ...requests.Request) *MockSource {
 	return &MockSource{reqs: reqs}
 }
 
-func (m *MockSource) Requests(ctx context.Context, f func(requests.Request) error) error {
-	for _, req := range m.reqs {
-		if err := f(req); err != nil {
-			return err
-		}
-	}
-	return nil
+func (m *MockSource) Requests(ctx context.Context)  ([]requests.Request, error) {
+	return m.reqs, nil
 }

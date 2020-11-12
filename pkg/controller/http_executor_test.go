@@ -82,9 +82,9 @@ func TestFastHttpWorker_Work(t *testing.T) {
 			require.NoError(t, err)
 			req.Headers = tt.args.headers
 			req.Body = tt.args.body
-			f := NewFastHttpWorker(tt.fields.timeout)
-			if err := f.Work(req); (err != nil) != tt.wantErr {
-				t.Errorf("Work() error = %v, wantErr %v", err, tt.wantErr)
+			f := NewHttpExecutor(tt.fields.timeout)
+			if err := f.Execute(req); (err != nil) != tt.wantErr {
+				t.Errorf("Execute() error = %v, wantErr %v", err, tt.wantErr)
 			}
 			if !tt.wantErr {
 				require.Len(t, mockServer.ServerRequests, 1)

@@ -6,5 +6,5 @@ import (
 )
 
 type Source interface {
-	Requests(context.Context, func(requests.Request) error) error
+	Requests(context.Context) ([]requests.Request, error)
 }
