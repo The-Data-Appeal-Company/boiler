@@ -59,7 +59,7 @@ func (r RelativeDateShiftTransformation) Apply(request requests.Request) (reques
 		formattedParam := parsedParam.Format(r.conf.DateFormat)
 		request.Params[paramName] = []string{formattedParam}
 
-		fmt.Printf("paramter %s = %s in day %s -> today: %s delta: %s\n", paramName, value[0],  relative.Format(r.conf.DateFormat), formattedParam, timeDelta.String())
+		fmt.Printf("paramter %s = %s in day %s -> today: %s delta: %s\n", paramName, value[0], relative.Format(r.conf.DateFormat), formattedParam, timeDelta.String())
 	}
 
 	return request, nil

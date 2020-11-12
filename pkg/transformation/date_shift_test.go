@@ -77,7 +77,6 @@ func TestDateShiftRelativeToNextDay(t *testing.T) {
 	require.Equal(t, modifiedReq.Params["to"][0], "2020-01-06")
 }
 
-
 func TestDateShiftRelativeAfter5Days(t *testing.T) {
 	const format = "2006-01-02"
 
@@ -197,7 +196,7 @@ func TestDateShiftRelativeToQueryParamInvalidDate(t *testing.T) {
 		Path:   "/test",
 		Params: map[string][]string{
 			"from": {"monday"},
-			"to": {"2020-01-02"},
+			"to":   {"2020-01-02"},
 		},
 		SourceParams: map[string]interface{}{
 			"request_date": "2020-01-01",
