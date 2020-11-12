@@ -2,6 +2,8 @@ package controller
 
 import (
 	"boiler/pkg/requests"
+	"fmt"
+	"strings"
 )
 
 type MockRequestExecutor struct {
@@ -14,5 +16,8 @@ func NewMockRequestExecutor() *MockRequestExecutor {
 
 func (m *MockRequestExecutor) Execute(req requests.Request) error {
 	m.requests = append(m.requests, req)
+	if strings.Contains(req.Path, "/error") {
+		return fmt.Errorf("error")
+	}
 	return nil
 }
