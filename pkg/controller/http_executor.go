@@ -30,7 +30,7 @@ func (f *HttpExecutor) Execute(request requests.Request) error {
 	}
 
 	fmt.Printf("%d - %s\n", resp.StatusCode, request.Uri().String())
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("http call status: %s", resp.Status)
 	}
 	return nil
