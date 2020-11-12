@@ -1,4 +1,4 @@
 vendor/
 .idea/
-prod.yml
+examples/prod/**
 boiler

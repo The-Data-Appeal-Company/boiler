@@ -17,12 +17,31 @@ func getMapStringString(m map[string]interface{}, key string) (map[string]string
 		return nil, fmt.Errorf("%w: %s", ErrKeyNotPresent, key)
 	}
 
-	value, isStr := rawValue.(map[string]string)
-	if !isStr {
-		return nil, fmt.Errorf("%w: %s", ErrInvalidType, key)
+	value, isStrMap := rawValue.(map[string]string)
+	if isStrMap {
+		return value, nil
 	}
 
-	return value, nil
+	ifValue, isIfMap := rawValue.(map[interface{}]interface{})
+	if isIfMap {
+		smap := make(map[string]string, len(ifValue))
+		for k, v := range ifValue {
+			ks, isStr := k.(string)
+			if !isStr {
+				return nil, fmt.Errorf("invalid type for map key: %s", k)
+			}
+
+			vs, isStr := v.(string)
+			if !isStr {
+				return nil, fmt.Errorf("invalid value type for map key: %s", k)
+			}
+
+			smap[ks] = vs
+		}
+		return smap, nil
+	}
+
+	return value, fmt.Errorf("%w: %s must be map[string]string or map[string]interface{}", ErrInvalidType, key)
 }
 
 func getDuration(m map[string]interface{}, key string) (time.Duration, error) {
