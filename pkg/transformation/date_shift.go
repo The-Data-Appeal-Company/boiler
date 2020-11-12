@@ -32,8 +32,8 @@ func (r RelativeDateShiftTransformation) Apply(request requests.Request) (reques
 		return requests.Request{}, err
 	}
 
-	relativeTime := truncDay(r.conf.RelativeTimeFn())
-	timeDelta := relativeTime.Sub(truncDay(relative))
+	relativeTime := truncDay(r.conf.RelativeTimeFn()).UTC()
+	timeDelta := relativeTime.Sub(truncDay(relative.UTC())) + 1*time.Hour
 
 	for _, paramName := range r.conf.TargetFields {
 		value, present := request.Params[paramName]
@@ -54,10 +54,12 @@ func (r RelativeDateShiftTransformation) Apply(request requests.Request) (reques
 			return requests.Request{}, err
 		}
 
-		parsedParam = parsedParam.Add(timeDelta)
+		parsedParam = parsedParam.UTC().Add(timeDelta)
 
 		formattedParam := parsedParam.Format(r.conf.DateFormat)
 		request.Params[paramName] = []string{formattedParam}
+
+		fmt.Printf("paramter %s = %s in day %s -> today: %s delta: %s\n", paramName, value[0],  relative.Format(r.conf.DateFormat), formattedParam, timeDelta.String())
 	}
 
 	return request, nil

@@ -25,7 +25,6 @@ type HttpRequestExecutor struct {
 func NewHttpRequestExecutor(config HttpExecutorConfig) *HttpRequestExecutor {
 	return &HttpRequestExecutor{
 		config: config,
-
 		client: &http.Client{
 			Timeout: config.Timeout,
 		},
@@ -53,10 +52,10 @@ func (h *HttpRequestExecutor) Execute(request requests.Request) error {
 		return err
 	}
 
-	fmt.Printf("%d - %s\n", resp.StatusCode, request.Uri().String())
 	if resp.StatusCode != 200 && !h.config.ContinueOnError {
 		return fmt.Errorf("http call status: %s", resp.Status)
 	}
 
+	fmt.Println(uri.String())
 	return nil
 }
