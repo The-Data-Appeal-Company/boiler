@@ -38,7 +38,6 @@ func TestExecutorHttpCreationInvalidTimeout(t *testing.T) {
 	require.Error(t, err)
 }
 
-
 func TestExecutorHttpCreationMissingConcurrency(t *testing.T) {
 	_, err := createHttpExecutorConfig(conf.RequestExecutorModel{
 		Type: controller.RequestExecutorHttp,

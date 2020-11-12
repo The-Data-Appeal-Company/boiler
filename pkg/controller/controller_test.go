@@ -38,5 +38,4 @@ func TestController(t *testing.T) {
 		require.Equal(t, r.Path, req.Path)
 		require.Equal(t, r.Scheme, req.Scheme)
 	}
-
 }

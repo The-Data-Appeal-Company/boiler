@@ -22,6 +22,11 @@ func NewController(requestExecutor RequestExecutor, source source.Source, transf
 }
 
 func (c Controller) Execute(ctx context.Context) error {
+	defer c.requestExecutor.Stop()
+	err := c.requestExecutor.Execute(ctx)
+	if err != nil {
+		return err
+	}
 	return c.source.Requests(ctx, func(request requests.Request) error {
 		request, err := c.applyTransformations(request)
 
@@ -29,10 +34,7 @@ func (c Controller) Execute(ctx context.Context) error {
 			return err
 		}
 
-		if err := c.requestExecutor.Execute(request); err != nil {
-			return err
-		}
-
+		c.requestExecutor.Feed(request)
 		return nil
 	})
 }

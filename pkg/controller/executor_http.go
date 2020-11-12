@@ -2,10 +2,9 @@ package controller
 
 import (
 	"boiler/pkg/requests"
+	"context"
 	"fmt"
-	"io/ioutil"
-	"net/http"
-	"strings"
+	"golang.org/x/sync/errgroup"
 	"time"
 )
 
@@ -18,45 +17,49 @@ type HttpExecutorConfig struct {
 }
 
 type HttpRequestExecutor struct {
-	client *http.Client
-	config HttpExecutorConfig
+	config          HttpExecutorConfig
+	requestsChannel chan requests.Request
+	errGrp          *errgroup.Group
+	executing       bool
 }
 
 func NewHttpRequestExecutor(config HttpExecutorConfig) *HttpRequestExecutor {
 	return &HttpRequestExecutor{
-		config: config,
-
-		client: &http.Client{
-			Timeout: config.Timeout,
-		},
+		config:    config,
+		executing: false,
 	}
 }
 
-func (h *HttpRequestExecutor) Execute(request requests.Request) error {
-	uri := request.Uri()
-	httpReq := &http.Request{
-		URL:    uri,
-		Header: request.Headers,
-	}
-	switch request.Method {
-	case requests.GET:
-	case requests.POST:
-		httpReq.Method = "POST"
-		httpReq.Body = ioutil.NopCloser(strings.NewReader(request.Body))
-	}
-	resp, err := h.client.Do(httpReq)
+func (h *HttpRequestExecutor) Feed(request requests.Request) {
+	h.requestsChannel <- request
+}
 
-	if err != nil {
-		if h.config.ContinueOnError {
+func (h *HttpRequestExecutor) Execute(ctx context.Context) error {
+	if h.executing {
+		return fmt.Errorf("alredy in execution. please stop before executing again")
+	}
+	h.executing = true
+	h.requestsChannel = make(chan requests.Request, h.config.Concurrency)
+	h.errGrp, ctx = errgroup.WithContext(ctx)
+	for i := 0; i < h.config.Concurrency; i++ {
+		worker := NewFastHttpWorker(h.config.Timeout)
+		h.errGrp.Go(func() error {
+			for request := range h.requestsChannel {
+				fmt.Println("EXE req")
+				err := worker.Work(request)
+				if err != nil && !h.config.ContinueOnError {
+					return err
+				}
+			}
 			return nil
-		}
-		return err
+		})
 	}
-
-	fmt.Printf("%d - %s\n", resp.StatusCode, request.Uri().String())
-	if resp.StatusCode != 200 && !h.config.ContinueOnError {
-		return fmt.Errorf("http call status: %s", resp.Status)
-	}
-
 	return nil
+}
+
+func (h *HttpRequestExecutor) Stop() error {
+	close(h.requestsChannel)
+	err := h.errGrp.Wait()
+	h.executing = false
+	return err
 }
