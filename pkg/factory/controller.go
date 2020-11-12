@@ -27,5 +27,17 @@ func CreateController(config conf.Config) (controller.Controller, error) {
 		return controller.Controller{}, err
 	}
 
-	return controller.NewController(requestExecutor, source, transformations), nil
+	controllerConf, err := createControllerConfig(config)
+	if err != nil {
+		return controller.Controller{}, err
+	}
+
+	return controller.NewController(source, transformations, requestExecutor, controllerConf), nil
+}
+
+func createControllerConfig(config conf.Config) (controller.Config, error) {
+	return controller.Config{
+		Concurrency:     config.RequestExecutorModel.Concurrency,
+		ContinueOnError: config.RequestExecutorModel.ContinueOnError,
+	}, nil
 }

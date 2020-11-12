@@ -9,6 +9,8 @@ import (
 	"time"
 )
 
+const ExecutorHttp = "http"
+
 func (f *HttpExecutor) Execute(request requests.Request) error {
 	uri := request.Uri()
 	httpReq := &http.Request{
@@ -38,10 +40,14 @@ type HttpExecutor struct {
 	client *http.Client
 }
 
-func NewHttpExecutor(timeout time.Duration) *HttpExecutor {
+type HttpExecutorConfiguration struct {
+	Timeout time.Duration
+}
+
+func NewHttpExecutor(conf HttpExecutorConfiguration) *HttpExecutor {
 	return &HttpExecutor{
 		client: &http.Client{
-			Timeout: timeout,
+			Timeout: conf.Timeout,
 		},
 	}
 }

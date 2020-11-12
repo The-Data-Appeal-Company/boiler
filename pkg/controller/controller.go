@@ -7,12 +7,10 @@ import (
 	"context"
 	"fmt"
 	"golang.org/x/sync/errgroup"
-	"time"
 )
 
 type Config struct {
 	Concurrency     int
-	Timeout         time.Duration
 	ContinueOnError bool
 }
 
