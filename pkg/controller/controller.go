@@ -5,7 +5,6 @@ import (
 	"boiler/pkg/source"
 	"boiler/pkg/transformation"
 	"context"
-	"fmt"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -37,7 +36,6 @@ func (c Controller) Execute(parentCtx context.Context) error {
 	for i := 0; i < c.config.Concurrency; i++ {
 		errGrp.Go(func() error {
 			for request := range reqsChan {
-				fmt.Println("EXE req")
 				err := c.executor.Execute(request)
 				if err != nil && !c.config.ContinueOnError {
 					cancel()

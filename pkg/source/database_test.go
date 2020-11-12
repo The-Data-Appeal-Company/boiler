@@ -44,7 +44,7 @@ func TestDatabaseSource(t *testing.T) {
 	}
 
 	source := NewDatabase(config)
- 
+
 	reqs, err := source.Requests(context.TODO())
 	require.NoError(t, err)
 

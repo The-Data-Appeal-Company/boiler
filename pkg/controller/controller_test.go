@@ -7,7 +7,6 @@ import (
 	"context"
 	"github.com/stretchr/testify/require"
 	"testing"
-	"time"
 )
 
 func TestController(t *testing.T) {
@@ -24,7 +23,6 @@ func TestController(t *testing.T) {
 	}
 	contrl := NewController(src, transformations, requestExecutor, Config{
 		Concurrency:     3,
-		Timeout:         2 * time.Second,
 		ContinueOnError: true,
 	})
 
@@ -55,7 +53,6 @@ func TestHttpRequestExecutor_ContinueOnErrorFalse(t *testing.T) {
 	nConcurrency := 3
 	contrl := NewController(src, transformations, requestExecutor, Config{
 		Concurrency:     nConcurrency,
-		Timeout:         2 * time.Second,
 		ContinueOnError: false,
 	})
 
