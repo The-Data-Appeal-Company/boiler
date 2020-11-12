@@ -5,6 +5,7 @@ import (
 	"boiler/pkg/source"
 	"boiler/pkg/transformation"
 	"context"
+	"github.com/hashicorp/go-multierror"
 	"golang.org/x/sync/errgroup"
 	"time"
 )
@@ -46,18 +47,18 @@ func (c Controller) Execute(parentCtx context.Context) error {
 
 	ctx, cancel := context.WithCancel(parentCtx)
 	defer cancel()
-
 	errGrp, ctx := errgroup.WithContext(ctx)
 	for i := 0; i < c.config.Concurrency; i++ {
 		errGrp.Go(func() error {
+			var result error
 			for request := range reqsChan {
 				err := c.executor.Execute(request)
 				if err != nil && !c.config.ContinueOnError {
 					cancel()
-					return err
+					result = multierror.Append(result, err)
 				}
 			}
-			return nil
+			return result
 		})
 	}
 
@@ -70,7 +71,7 @@ func (c Controller) Execute(parentCtx context.Context) error {
 		for _, req := range reqs {
 			select {
 			case <-ctx.Done():
-				break
+				return nil
 			default:
 				transformed, err := c.applyTransformations(req)
 				if err != nil {

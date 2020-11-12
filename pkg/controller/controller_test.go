@@ -50,14 +50,13 @@ func TestHttpRequestExecutor_ContinueOnErrorFalse(t *testing.T) {
 			Fields: []string{"test"},
 		}),
 	}
-	nConcurrency := 3
+
 	contrl := NewController(src, transformations, requestExecutor, Config{
-		Concurrency:     nConcurrency,
+		Concurrency:     3,
 		ContinueOnError: false,
 	})
 
 	err = contrl.Execute(context.TODO())
 	require.Error(t, err)
-
-	require.LessOrEqual(t, len(requestExecutor.requests), nConcurrency)
+	require.GreaterOrEqual(t, len(requestExecutor.requests), 1)
 }
