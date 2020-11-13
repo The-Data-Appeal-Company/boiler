@@ -8,6 +8,16 @@ import (
 	"time"
 )
 
+func TestExecutorCreationFromConfiguration(t *testing.T) {
+	config, err := conf.NewFileReader("testdata/example-config.yml").ReadConf()
+	require.NoError(t, err)
+
+	executorConf, err := createHttpExecutorConfig(config.RequestExecutorModel)
+	require.NoError(t, err)
+
+	require.Equal(t, executorConf.Timeout, 60*time.Second)
+}
+
 func TestExecutorHttpCreation(t *testing.T) {
 	config, err := createHttpExecutorConfig(conf.RequestExecutorModel{
 		Type: controller.ExecutorHttp,

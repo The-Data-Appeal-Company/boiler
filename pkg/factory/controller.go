@@ -43,8 +43,8 @@ func createControllerConfig(config conf.Config) (controller.Config, error) {
 	}
 
 	return controller.Config{
-		Concurrency:     config.RequestExecutorModel.Concurrency,
-		ContinueOnError: config.RequestExecutorModel.ContinueOnError,
+		Concurrency:     config.RequestExecutorModel.Config.Concurrency,
+		ContinueOnError: config.RequestExecutorModel.Config.ContinueOnError,
 		Budget: controller.BudgetConfig{
 			TimeBudget: timeBudget,
 		},
