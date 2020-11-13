@@ -36,3 +36,15 @@ func TestFileReader(t *testing.T) {
 	require.True(t, isStr)
 	require.Equal(t, "value", value)
 }
+
+func TestErrorWhenNoSuchFile(t *testing.T) {
+	fileReader := NewFileReader("testdata/non_existing")
+	_, err := fileReader.ReadConf()
+	require.Error(t, err)
+}
+
+func TestErrorWhenInvalidYAml(t *testing.T) {
+	fileReader := NewFileReader("testdata/not_valid.yml")
+	_, err := fileReader.ReadConf()
+	require.Error(t, err)
+}

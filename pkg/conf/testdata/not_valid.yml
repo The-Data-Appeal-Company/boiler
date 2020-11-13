@@ -1,0 +1,14 @@
+source:
+  type: database
+  params:
+    driver: redshift
+    uri: 'root@localhost:5432'
+transformations:
+type: remove-filters
+    params:
+      filters: [ 'to', 'from' ]
+
+  - type: add-filter
+    params:
+      name: test
+      value: "value"
