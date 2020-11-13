@@ -7,6 +7,7 @@ import (
 	"context"
 	"github.com/stretchr/testify/require"
 	"testing"
+	"time"
 )
 
 func TestController(t *testing.T) {
@@ -59,4 +60,49 @@ func TestHttpRequestExecutor_ContinueOnErrorFalse(t *testing.T) {
 	err = contrl.Execute(context.TODO())
 	require.Error(t, err)
 	require.GreaterOrEqual(t, len(requestExecutor.requests), 1)
+}
+
+func TestHttpExecutor_TimeBudget(t *testing.T) {
+	testWithTimeout(t, 10*time.Second, func(t *testing.T) {
+		requestExecutor := NewMockRequestExecutor(
+			MockDelay(100 * time.Millisecond),
+		)
+
+		req, err := requests.FromStr("http//localhost:4321/", "GET")
+		require.NoError(t, err)
+
+		reqsCount := 1000
+		reqs := make([]requests.Request, reqsCount)
+		for i := 0; i < reqsCount; i++ {
+			reqs[i] = req
+		}
+
+		src := source.NewMockSource(reqs...)
+
+		contrl := NewController(src, []transformation.Transformation{}, requestExecutor, Config{
+			Concurrency:     3,
+			ContinueOnError: false,
+			Budget:          BudgetConfig{TimeBudget: 300 * time.Millisecond},
+		})
+
+		err = contrl.Execute(context.TODO())
+		require.NoError(t, err)
+	})
+}
+
+func testWithTimeout(t *testing.T, timeoutDuration time.Duration, testFn func(t *testing.T)) {
+	done := make(chan interface{})
+	timeout := time.After(timeoutDuration)
+
+	go func() {
+		testFn(t)
+		done <- true
+	}()
+
+	select {
+	case <-done:
+		break
+	case <-timeout:
+		t.Fatal("test timed out")
+	}
 }
