@@ -89,7 +89,7 @@ func TestHttpExecutor_TimeBudget(t *testing.T) {
 		}, testLogger)
 
 		err = contrl.Execute(context.TODO())
-		require.NoError(t, err)
+		require.Error(t, context.DeadlineExceeded)
 	})
 }
 
