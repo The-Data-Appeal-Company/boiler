@@ -93,6 +93,34 @@ func TestHttpExecutor_TimeBudget(t *testing.T) {
 	})
 }
 
+func TestHttpExecutor_TimeBudgetCompletion(t *testing.T) {
+	testWithTimeout(t, 10*time.Second, func(t *testing.T) {
+		requestExecutor := NewMockRequestExecutor(MockDelay(2 * time.Millisecond))
+
+		req, err := requests.FromStr("http//localhost:4321/", "GET")
+		require.NoError(t, err)
+
+		reqsCount := 1000
+		reqs := make([]requests.Request, reqsCount)
+		for i := 0; i < reqsCount; i++ {
+			reqs[i] = req
+		}
+
+		src := source.NewMockSource(reqs...)
+
+		contrl := NewController(src, []transformation.Transformation{}, requestExecutor, Config{
+			Concurrency:     10,
+			ContinueOnError: false,
+			Budget:          BudgetConfig{TimeBudget: 1 * time.Hour},
+		}, testLogger)
+
+		err = contrl.Execute(context.TODO())
+		require.NoError(t, err)
+
+		require.Len(t, requestExecutor.requests, reqsCount)
+	})
+}
+
 func testWithTimeout(t *testing.T, timeoutDuration time.Duration, testFn func(t *testing.T)) {
 	done := make(chan interface{})
 	timeout := time.After(timeoutDuration)

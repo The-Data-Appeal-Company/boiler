@@ -6,13 +6,13 @@ import (
 	"boiler/pkg/logging"
 )
 
-func createHttpExecutor(model conf.RequestExecutorModel) (controller.Executor, error) {
+func createHttpExecutor(model conf.RequestExecutorModel, logger logging.Logger) (controller.Executor, error) {
 	config, err := createHttpExecutorConfig(model)
 	if err != nil {
 		return nil, err
 	}
 
-	return controller.NewHttpExecutor(config, logging.Noop()), nil
+	return controller.NewHttpExecutor(config, logger), nil
 }
 
 func createHttpExecutorConfig(model conf.RequestExecutorModel) (controller.HttpExecutorConfiguration, error) {

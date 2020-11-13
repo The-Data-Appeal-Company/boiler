@@ -50,6 +50,7 @@ func (c Controller) Execute(parentCtx context.Context) error {
 
 	ctx, cancel := context.WithCancel(parentCtx)
 	defer cancel()
+
 	errGrp, ctx := errgroup.WithContext(ctx)
 	for i := 0; i < c.config.Concurrency; i++ {
 		errGrp.Go(func() error {
@@ -67,6 +68,7 @@ func (c Controller) Execute(parentCtx context.Context) error {
 
 	errGrp.Go(func() error {
 		defer close(reqsChan)
+
 		reqs, err := c.source.Requests(ctx)
 		if err != nil {
 			return err
@@ -77,7 +79,7 @@ func (c Controller) Execute(parentCtx context.Context) error {
 		for _, req := range reqs {
 			select {
 			case <-ctx.Done():
-				return nil
+				return ctx.Err()
 			default:
 				transformed, err := c.applyTransformations(req)
 				if err != nil {

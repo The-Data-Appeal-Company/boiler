@@ -24,7 +24,7 @@ func CreateController(config conf.Config, logger logging.Logger) (controller.Con
 		transformations[i] = transf
 	}
 
-	requestExecutor, err := CreateExecutor(config.RequestExecutorModel)
+	requestExecutor, err := CreateExecutor(config.RequestExecutorModel, logger)
 	if err != nil {
 		return controller.Controller{}, err
 	}
