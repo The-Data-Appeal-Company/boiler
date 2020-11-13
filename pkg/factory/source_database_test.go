@@ -57,14 +57,14 @@ func Test_createSourceDatabase(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name:    "shouldErrorWhenNoQuery",
-			args:    args{
+			name: "shouldErrorWhenNoQuery",
+			args: args{
 				model: conf.SourceModel{
-					Type:   "",
+					Type: "",
 					Params: map[string]interface{}{
-						"uri": "http://uri.com",
-						"driver": "mysql",
-						"url_column": "url",
+						"uri":                "http://uri.com",
+						"driver":             "mysql",
+						"url_column":         "url",
 						"http_method_column": "get",
 					},
 				},
@@ -73,14 +73,14 @@ func Test_createSourceDatabase(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name:    "shouldErrorWhenNoUri",
-			args:    args{
+			name: "shouldErrorWhenNoUri",
+			args: args{
 				model: conf.SourceModel{
-					Type:   "",
+					Type: "",
 					Params: map[string]interface{}{
-						"query": "select * from aa",
-						"driver": "mysql",
-						"url_column": "url",
+						"query":              "select * from aa",
+						"driver":             "mysql",
+						"url_column":         "url",
 						"http_method_column": "get",
 					},
 				},
@@ -89,14 +89,14 @@ func Test_createSourceDatabase(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name:    "shouldErrorWhenNoDriver",
-			args:    args{
+			name: "shouldErrorWhenNoDriver",
+			args: args{
 				model: conf.SourceModel{
-					Type:   "",
+					Type: "",
 					Params: map[string]interface{}{
-						"query": "select * from aa",
-						"uri": "http://uri.com",
-						"url_column": "url",
+						"query":              "select * from aa",
+						"uri":                "http://uri.com",
+						"url_column":         "url",
 						"http_method_column": "get",
 					},
 				},
@@ -105,14 +105,14 @@ func Test_createSourceDatabase(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name:    "shouldErrorWhenNoUrlColumn",
-			args:    args{
+			name: "shouldErrorWhenNoUrlColumn",
+			args: args{
 				model: conf.SourceModel{
-					Type:   "",
+					Type: "",
 					Params: map[string]interface{}{
-						"query": "select * from aa",
-						"uri": "http://uri.com",
-						"driver": "mysql",
+						"query":              "select * from aa",
+						"uri":                "http://uri.com",
+						"driver":             "mysql",
 						"http_method_column": "get",
 					},
 				},
@@ -121,14 +121,14 @@ func Test_createSourceDatabase(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name:    "shouldErrorWhenNoMethod",
-			args:    args{
+			name: "shouldErrorWhenNoMethod",
+			args: args{
 				model: conf.SourceModel{
-					Type:   "",
+					Type: "",
 					Params: map[string]interface{}{
-						"query": "select * from aa",
-						"uri": "http://uri.com",
-						"driver": "mysql",
+						"query":      "select * from aa",
+						"uri":        "http://uri.com",
+						"driver":     "mysql",
 						"url_column": "url",
 					},
 				},

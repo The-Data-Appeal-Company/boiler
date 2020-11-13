@@ -72,7 +72,7 @@ func TestCreateController(t *testing.T) {
 	confi := controller.Config{
 		Concurrency:     1,
 		ContinueOnError: true,
-		Budget:          controller.BudgetConfig{
+		Budget: controller.BudgetConfig{
 			TimeBudget: 32 * time.Second,
 		},
 	}
