@@ -89,7 +89,6 @@ func (c Controller) Execute(parentCtx context.Context) error {
 		return nil
 	})
 
-
 	return errGrp.Wait()
 }
 

@@ -9,4 +9,3 @@ func TestLogrusLogger(t *testing.T) {
 	logger.Warn("test %s", "1")
 	logger.Error("test %s", "1")
 }
-
