@@ -70,6 +70,40 @@ func TestDatabaseSource(t *testing.T) {
 	require.Equal(t, "http://localhost:4321/test?param=1&param=2", uri.String())
 }
 
+func TestDatabaseQueryError(t *testing.T) {
+	const dbConn = "TestDatabaseSourceError"
+
+	db, err := sql.Open("ramsql", dbConn)
+	if err != nil {
+		t.Fatalf("sql.Open : Error : %s\n", err)
+	}
+	defer db.Close()
+
+	config := DatabaseSourceConfiguration{
+		Connection: struct {
+			Uri    string
+			Driver string
+		}{
+			Uri:    dbConn,
+			Driver: "ramsql",
+		},
+		Extraction: struct {
+			Query                string
+			UrlColumnName        string
+			HttpMethodColumnName string
+		}{
+			Query:                `select * from urls`,
+			UrlColumnName:        "uri",
+			HttpMethodColumnName: "method",
+		},
+	}
+
+	source := NewDatabase(config)
+
+	_, err = source.Requests(context.TODO())
+	require.Error(t, err)
+}
+
 func Test_getString(t *testing.T) {
 	type args struct {
 		values map[string]interface{}

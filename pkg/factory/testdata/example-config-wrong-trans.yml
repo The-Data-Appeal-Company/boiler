@@ -1,0 +1,23 @@
+executor:
+  type: http
+  configuration:
+    continue_on_error: true
+    concurrency: 1
+  budget:
+    time: 32s
+  params:
+    timeout: 60s
+
+source:
+  type: database
+  params:
+    uri: 'sslmode=require user=<user> password=<password> host=<host> port=<port> dbname=<db_name>'
+    driver: postgres
+    url_column: 'uri'
+    http_method_column: 'method'
+    query: |-
+      select uri, request_date, 'GET' as method FROM table
+
+transformations:
+  - type: bididibodidibu
+    params:

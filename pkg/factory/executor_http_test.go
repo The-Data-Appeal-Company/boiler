@@ -41,3 +41,9 @@ func TestExecutorHttpCreationInvalidTimeout(t *testing.T) {
 
 	require.Error(t, err)
 }
+
+func TestCreateHttpExecutorInvalidTimeout(t *testing.T) {
+	_, err := createHttpExecutor(conf.RequestExecutorModel{}, &MockLog{})
+
+	require.Error(t, err)
+}

@@ -1,0 +1,19 @@
+executor:
+  type: http
+  configuration:
+    continue_on_error: true
+    concurrency: 1
+  budget:
+    time: 32s
+  params:
+    timeout: 60s
+
+source:
+  type: people
+  params:
+
+
+transformations:
+  - type: rewrite-host
+    params:
+      host: localhost:8080

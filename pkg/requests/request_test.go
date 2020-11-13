@@ -100,5 +100,16 @@ func TestRequestCreationFromUrl(t *testing.T) {
 
 	require.Equal(t, []string{"1"}, req.Params["param1"])
 	require.Equal(t, []string{"2", "3"}, req.Params["param2"])
+}
 
+func TestFromStrInvalidUrl(t *testing.T) {
+	_, err := FromStr("http://invalid url.com", "get")
+	require.Error(t, err)
+}
+
+func TestFromStrIValidUrl(t *testing.T) {
+	u, err := FromStr("http://url.com", "get")
+	require.NoError(t, err)
+	require.Equal(t, "http", u.Scheme)
+	require.Equal(t, "url.com", u.Host)
 }

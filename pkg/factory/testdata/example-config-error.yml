@@ -1,0 +1,36 @@
+executor:
+  type: http
+  configuration:
+    continue_on_error: true
+    concurrency: 1
+  budget:
+    time: 32secutes
+  params:
+    timeout: 60s
+
+source:
+  type: database
+  params:
+    uri: 'sslmode=require user=<user> password=<password> host=<host> port=<port> dbname=<db_name>'
+    driver: postgres
+    url_column: 'uri'
+    http_method_column: 'method'
+    query: |-
+      select uri, request_date, 'GET' as method FROM table
+
+transformations:
+  - type: relative-time-shift
+    params:
+      relative_to: "$request_date"
+      date_format: "2006-01-02"
+      target_fields: [ "from", "to" ]
+
+  - type: rewrite-host
+    params:
+      host: localhost:8080
+
+  - type: write-header
+    params:
+      headers:
+        requestid: cache-warmer
+
