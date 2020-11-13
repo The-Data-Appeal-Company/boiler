@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"boiler/pkg/logging"
 	"boiler/pkg/requests"
 	"boiler/pkg/source"
 	"boiler/pkg/transformation"
@@ -9,6 +10,8 @@ import (
 	"testing"
 	"time"
 )
+
+var testLogger = logging.Noop()
 
 func TestController(t *testing.T) {
 	req, err := requests.FromStr("http//localhost:4321/test?test=true", "GET")
@@ -25,7 +28,7 @@ func TestController(t *testing.T) {
 	contrl := NewController(src, transformations, requestExecutor, Config{
 		Concurrency:     3,
 		ContinueOnError: true,
-	})
+	}, testLogger)
 
 	err = contrl.Execute(context.TODO())
 	require.NoError(t, err)
@@ -55,7 +58,7 @@ func TestHttpRequestExecutor_ContinueOnErrorFalse(t *testing.T) {
 	contrl := NewController(src, transformations, requestExecutor, Config{
 		Concurrency:     3,
 		ContinueOnError: false,
-	})
+	}, testLogger)
 
 	err = contrl.Execute(context.TODO())
 	require.Error(t, err)
@@ -83,7 +86,7 @@ func TestHttpExecutor_TimeBudget(t *testing.T) {
 			Concurrency:     3,
 			ContinueOnError: false,
 			Budget:          BudgetConfig{TimeBudget: 300 * time.Millisecond},
-		})
+		}, testLogger)
 
 		err = contrl.Execute(context.TODO())
 		require.NoError(t, err)

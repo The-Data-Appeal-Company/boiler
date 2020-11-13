@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"boiler/pkg/logging"
 	"boiler/pkg/requests"
 	"boiler/pkg/source"
 	"boiler/pkg/transformation"
@@ -25,14 +26,16 @@ type Controller struct {
 	transformations []transformation.Transformation
 	executor        Executor
 	config          Config
+	logger          logging.Logger
 }
 
-func NewController(source source.Source, transformations []transformation.Transformation, executor Executor, config Config) Controller {
+func NewController(source source.Source, transformations []transformation.Transformation, executor Executor, config Config, logger logging.Logger) Controller {
 	return Controller{
 		source:          source,
 		transformations: transformations,
 		executor:        executor,
 		config:          config,
+		logger:          logger,
 	}
 }
 
@@ -68,6 +71,9 @@ func (c Controller) Execute(parentCtx context.Context) error {
 		if err != nil {
 			return err
 		}
+
+		c.logger.Info("%d requests to run", len(reqs))
+
 		for _, req := range reqs {
 			select {
 			case <-ctx.Done():
@@ -82,6 +88,8 @@ func (c Controller) Execute(parentCtx context.Context) error {
 		}
 		return nil
 	})
+
+
 	return errGrp.Wait()
 }
 

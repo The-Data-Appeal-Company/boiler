@@ -3,6 +3,7 @@ package main
 import (
 	"boiler/pkg/conf"
 	"boiler/pkg/factory"
+	"boiler/pkg/logging"
 	"context"
 	"flag"
 	"log"
@@ -18,7 +19,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	controller, err := factory.CreateController(config)
+	var logger logging.Logger = logging.Logrus()
+
+	controller, err := factory.CreateController(config, logger)
 	if err != nil {
 		log.Fatal(err)
 	}
