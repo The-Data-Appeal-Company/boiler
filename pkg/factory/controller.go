@@ -3,11 +3,12 @@ package factory
 import (
 	"boiler/pkg/conf"
 	"boiler/pkg/controller"
+	"boiler/pkg/logging"
 	"boiler/pkg/transformation"
 	"time"
 )
 
-func CreateController(config conf.Config) (controller.Controller, error) {
+func CreateController(config conf.Config, logger logging.Logger) (controller.Controller, error) {
 	source, err := CreateSource(config.Source)
 	if err != nil {
 		return controller.Controller{}, err
@@ -23,7 +24,7 @@ func CreateController(config conf.Config) (controller.Controller, error) {
 		transformations[i] = transf
 	}
 
-	requestExecutor, err := CreateExecutor(config.RequestExecutorModel)
+	requestExecutor, err := CreateExecutor(config.RequestExecutorModel, logger)
 	if err != nil {
 		return controller.Controller{}, err
 	}
@@ -33,7 +34,7 @@ func CreateController(config conf.Config) (controller.Controller, error) {
 		return controller.Controller{}, err
 	}
 
-	return controller.NewController(source, transformations, requestExecutor, controllerConf), nil
+	return controller.NewController(source, transformations, requestExecutor, controllerConf, logger), nil
 }
 
 func createControllerConfig(config conf.Config) (controller.Config, error) {

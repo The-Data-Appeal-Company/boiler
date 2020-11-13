@@ -36,10 +36,12 @@ transformations:
 
 executor:
   type: http
-  params:
+  configuration:
     continue_on_error: true
     concurrency: 1
+  budget:
+    time: 32s
+  params:
     timeout: 60s
-
 ```
 

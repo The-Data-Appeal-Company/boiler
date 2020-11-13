@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"boiler/pkg/logging"
 	"boiler/pkg/requests"
 	"boiler/pkg/source"
 	"boiler/pkg/transformation"
@@ -25,14 +26,16 @@ type Controller struct {
 	transformations []transformation.Transformation
 	executor        Executor
 	config          Config
+	logger          logging.Logger
 }
 
-func NewController(source source.Source, transformations []transformation.Transformation, executor Executor, config Config) Controller {
+func NewController(source source.Source, transformations []transformation.Transformation, executor Executor, config Config, logger logging.Logger) Controller {
 	return Controller{
 		source:          source,
 		transformations: transformations,
 		executor:        executor,
 		config:          config,
+		logger:          logger,
 	}
 }
 
@@ -47,6 +50,7 @@ func (c Controller) Execute(parentCtx context.Context) error {
 
 	ctx, cancel := context.WithCancel(parentCtx)
 	defer cancel()
+
 	errGrp, ctx := errgroup.WithContext(ctx)
 	for i := 0; i < c.config.Concurrency; i++ {
 		errGrp.Go(func() error {
@@ -64,14 +68,18 @@ func (c Controller) Execute(parentCtx context.Context) error {
 
 	errGrp.Go(func() error {
 		defer close(reqsChan)
+
 		reqs, err := c.source.Requests(ctx)
 		if err != nil {
 			return err
 		}
+
+		c.logger.Info("%d requests to run", len(reqs))
+
 		for _, req := range reqs {
 			select {
 			case <-ctx.Done():
-				return nil
+				return ctx.Err()
 			default:
 				transformed, err := c.applyTransformations(req)
 				if err != nil {
@@ -82,6 +90,7 @@ func (c Controller) Execute(parentCtx context.Context) error {
 		}
 		return nil
 	})
+
 	return errGrp.Wait()
 }
 

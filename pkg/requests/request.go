@@ -8,6 +8,17 @@ import (
 
 type HttpMethod string
 
+func (m HttpMethod) String() (string, error) {
+	switch m {
+	case GET:
+		return "GET", nil
+	case POST:
+		return "POST", nil
+	}
+
+	return "", fmt.Errorf("http method %s String() not supported", m)
+}
+
 const (
 	GET  HttpMethod = "GET"
 	POST HttpMethod = "POST"
