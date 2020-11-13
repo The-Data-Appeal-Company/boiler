@@ -29,6 +29,11 @@ func main() {
 	ctx := context.Background()
 	err = controller.Execute(ctx)
 	if err != nil {
+		if err == context.DeadlineExceeded {
+			logger.Warn("budget timeout expired")
+			return
+		}
+
 		log.Fatal(err)
 	}
 
