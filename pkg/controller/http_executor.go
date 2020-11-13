@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"boiler/pkg/logging"
 	"boiler/pkg/requests"
 	"fmt"
 	"io/ioutil"
@@ -10,6 +11,24 @@ import (
 )
 
 const ExecutorHttp = "http"
+
+type HttpExecutor struct {
+	client *http.Client
+	logger logging.Logger
+}
+
+type HttpExecutorConfiguration struct {
+	Timeout time.Duration
+}
+
+func NewHttpExecutor(conf HttpExecutorConfiguration, logger logging.Logger) *HttpExecutor {
+	return &HttpExecutor{
+		logger: logger,
+		client: &http.Client{
+			Timeout: conf.Timeout,
+		},
+	}
+}
 
 func (f *HttpExecutor) Execute(request requests.Request) error {
 	uri := request.Uri()
@@ -29,25 +48,10 @@ func (f *HttpExecutor) Execute(request requests.Request) error {
 		return err
 	}
 
-	fmt.Printf("%d - %s\n", resp.StatusCode, request.Uri().String())
+	f.logger.Info("%d - %s", resp.StatusCode, request.Uri().String())
+
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("http call status: %s", resp.Status)
 	}
 	return nil
-}
-
-type HttpExecutor struct {
-	client *http.Client
-}
-
-type HttpExecutorConfiguration struct {
-	Timeout time.Duration
-}
-
-func NewHttpExecutor(conf HttpExecutorConfiguration) *HttpExecutor {
-	return &HttpExecutor{
-		client: &http.Client{
-			Timeout: conf.Timeout,
-		},
-	}
 }

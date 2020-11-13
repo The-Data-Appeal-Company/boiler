@@ -82,7 +82,7 @@ func TestFastHttpWorker_Work(t *testing.T) {
 			require.NoError(t, err)
 			req.Headers = tt.args.headers
 			req.Body = tt.args.body
-			f := NewHttpExecutor(HttpExecutorConfiguration{Timeout: tt.fields.timeout})
+			f := NewHttpExecutor(HttpExecutorConfiguration{Timeout: tt.fields.timeout}, testLogger)
 			if err := f.Execute(req); (err != nil) != tt.wantErr {
 				t.Errorf("Execute() error = %v, wantErr %v", err, tt.wantErr)
 			}

@@ -3,6 +3,7 @@ package factory
 import (
 	"boiler/pkg/conf"
 	"boiler/pkg/controller"
+	"boiler/pkg/logging"
 )
 
 func createHttpExecutor(model conf.RequestExecutorModel) (controller.Executor, error) {
@@ -11,7 +12,7 @@ func createHttpExecutor(model conf.RequestExecutorModel) (controller.Executor, e
 		return nil, err
 	}
 
-	return controller.NewHttpExecutor(config), nil
+	return controller.NewHttpExecutor(config, logging.Noop()), nil
 }
 
 func createHttpExecutorConfig(model conf.RequestExecutorModel) (controller.HttpExecutorConfiguration, error) {
