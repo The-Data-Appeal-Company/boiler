@@ -83,7 +83,11 @@ func (c Controller) Execute(parentCtx context.Context) error {
 			default:
 				transformed, err := c.applyTransformations(req)
 				if err != nil {
-					return err
+					if !c.config.ContinueOnError {
+						return err
+					}
+					c.logger.Warn("unable to transform request %s: %w", req.String(), err)
+					continue
 				}
 				reqsChan <- transformed
 			}

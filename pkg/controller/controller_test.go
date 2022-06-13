@@ -6,6 +6,7 @@ import (
 	"boiler/pkg/source"
 	"boiler/pkg/transformation"
 	"context"
+	"errors"
 	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
@@ -121,6 +122,56 @@ func TestHttpExecutor_TimeBudgetCompletion(t *testing.T) {
 	})
 }
 
+func TestControllerWithTransformationErrorContinueOnError(t *testing.T) {
+	req, err := requests.FromStr("http//localhost:4321/test?test=true", "GET")
+
+	requestExecutor := NewMockRequestExecutor()
+
+	src := source.NewMockSource(req, req, req, req, req, req, req, req)
+
+	transformations := []transformation.Transformation{
+		transformation.NewRemoveQueryFilters(transformation.RemoveQueryParamsTransformConfiguration{
+			Fields: []string{"test"},
+		}),
+		NewMockTransformation(func(request requests.Request) (requests.Request, error) {
+			return req, errors.New("error applying transformation")
+		}),
+	}
+
+	contrl := NewController(src, transformations, requestExecutor, Config{
+		Concurrency:     3,
+		ContinueOnError: true,
+	}, testLogger)
+
+	err = contrl.Execute(context.TODO())
+	require.NoError(t, err)
+
+	require.Len(t, requestExecutor.requests, 0)
+}
+
+func TestControllerWithTransformationError(t *testing.T) {
+	req, err := requests.FromStr("http//localhost:4321/test?test=true", "GET")
+
+	requestExecutor := NewMockRequestExecutor()
+
+	src := source.NewMockSource(req, req, req, req, req, req, req, req)
+
+	transformations := []transformation.Transformation{
+		NewMockTransformation(func(request requests.Request) (requests.Request, error) {
+			return req, errors.New("error applying transformation")
+		}),
+	}
+
+	contrl := NewController(src, transformations, requestExecutor, Config{
+		Concurrency:     3,
+		ContinueOnError: false,
+	}, testLogger)
+
+	err = contrl.Execute(context.TODO())
+	require.Error(t, err)
+	require.Len(t, requestExecutor.requests, 0)
+}
+
 func testWithTimeout(t *testing.T, timeoutDuration time.Duration, testFn func(t *testing.T)) {
 	done := make(chan interface{})
 	timeout := time.After(timeoutDuration)
@@ -136,4 +187,16 @@ func testWithTimeout(t *testing.T, timeoutDuration time.Duration, testFn func(t 
 	case <-timeout:
 		t.Fatal("test timed out")
 	}
+}
+
+type mockTransformation struct {
+	tfn func(request requests.Request) (requests.Request, error)
+}
+
+func NewMockTransformation(tfn func(request requests.Request) (requests.Request, error)) *mockTransformation {
+	return &mockTransformation{tfn: tfn}
+}
+
+func (m mockTransformation) Apply(request requests.Request) (requests.Request, error) {
+	return m.tfn(request)
 }
