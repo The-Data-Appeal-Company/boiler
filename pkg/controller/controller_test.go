@@ -16,6 +16,7 @@ var testLogger = logging.Noop()
 
 func TestController(t *testing.T) {
 	req, err := requests.FromStr("http//localhost:4321/test?test=true", "GET")
+	require.NoError(t, err)
 
 	requestExecutor := NewMockRequestExecutor()
 
@@ -45,6 +46,7 @@ func TestController(t *testing.T) {
 
 func TestHttpRequestExecutor_ContinueOnErrorFalse(t *testing.T) {
 	req, err := requests.FromStr("http//localhost:4321/error", "GET")
+	require.NoError(t, err)
 
 	requestExecutor := NewMockRequestExecutor()
 
@@ -124,6 +126,7 @@ func TestHttpExecutor_TimeBudgetCompletion(t *testing.T) {
 
 func TestControllerWithTransformationErrorContinueOnError(t *testing.T) {
 	req, err := requests.FromStr("http//localhost:4321/test?test=true", "GET")
+	require.NoError(t, err)
 
 	requestExecutor := NewMockRequestExecutor()
 
@@ -151,6 +154,7 @@ func TestControllerWithTransformationErrorContinueOnError(t *testing.T) {
 
 func TestControllerWithTransformationError(t *testing.T) {
 	req, err := requests.FromStr("http//localhost:4321/test?test=true", "GET")
+	require.NoError(t, err)
 
 	requestExecutor := NewMockRequestExecutor()
 
