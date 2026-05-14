@@ -3,6 +3,7 @@ package factory
 import (
 	"boiler/pkg/conf"
 	"boiler/pkg/source"
+	"database/sql"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
@@ -44,6 +45,23 @@ func TestCreateSourceDatabase(t *testing.T) {
 			HttpMethodColumnName: httpMethodName,
 		},
 	})
+}
+
+func TestCreateSourceDatabase_TrinoDriver(t *testing.T) {
+	config, err := createSourceDatabaseConfiguration(conf.SourceModel{
+		Type: "database",
+		Params: map[string]interface{}{
+			"uri":                "http://user@host:8080?catalog=c&schema=s",
+			"driver":             "trino",
+			"query":              "select 1",
+			"url_column":         "uri",
+			"http_method_column": "method",
+		},
+	})
+
+	require.NoError(t, err)
+	require.Equal(t, "trino", config.Connection.Driver)
+	require.Contains(t, sql.Drivers(), "trino")
 }
 
 func Test_createSourceDatabase(t *testing.T) {

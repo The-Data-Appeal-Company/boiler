@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	_ "github.com/proullon/ramsql/driver"
 	"github.com/stretchr/testify/require"
+	"net"
 	"testing"
 )
 
@@ -101,6 +102,63 @@ func TestDatabaseQueryError(t *testing.T) {
 	source := NewDatabase(config)
 
 	_, err = source.Requests(context.TODO())
+	require.Error(t, err)
+}
+
+// Regression test for the libpq-style DSN that produced
+// `trino: invalid server URL: parse "://": missing protocol scheme`
+// when driver was switched to trino without rewriting the connection string as an http URL.
+func TestDatabaseTrinoMalformedDSN(t *testing.T) {
+	config := DatabaseSourceConfiguration{
+		Connection: struct {
+			Uri    string
+			Driver string
+		}{
+			Uri:    "sslmode=require user=u password=p host=h port=80 dbname=db",
+			Driver: "trino",
+		},
+		Extraction: struct {
+			Query                string
+			UrlColumnName        string
+			HttpMethodColumnName string
+		}{
+			Query:                "SELECT 1",
+			UrlColumnName:        "uri",
+			HttpMethodColumnName: "method",
+		},
+	}
+
+	_, err := NewDatabase(config).Requests(context.TODO())
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "trino")
+}
+
+func TestDatabaseTrinoNoServer(t *testing.T) {
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	require.NoError(t, err)
+	addr := listener.Addr().String()
+	require.NoError(t, listener.Close())
+
+	config := DatabaseSourceConfiguration{
+		Connection: struct {
+			Uri    string
+			Driver string
+		}{
+			Uri:    "http://" + addr + "?catalog=c&schema=s",
+			Driver: "trino",
+		},
+		Extraction: struct {
+			Query                string
+			UrlColumnName        string
+			HttpMethodColumnName string
+		}{
+			Query:                "SELECT 1",
+			UrlColumnName:        "uri",
+			HttpMethodColumnName: "method",
+		},
+	}
+
+	_, err = NewDatabase(config).Requests(context.TODO())
 	require.Error(t, err)
 }
 
