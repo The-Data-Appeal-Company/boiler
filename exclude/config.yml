@@ -1,0 +1,30 @@
+source:
+  type: database
+  params:
+    uri: 'sslmode=require user=cache_warmer_prod password=Q1R$Rnf3ow host=10.11.0.65 port=5439 dbname=ta'
+    driver: postgres
+    url_column: 'uri'
+    http_method_column: 'http_method'
+    query: |-
+      select 'http://localhost:8080' + api_id + '?' + query_params as uri , date(event_timestamp) as request_date, 'GET' as http_method
+      from destinations_api_logs
+      where http_status_code = 200
+      order by request_date desc 
+      limit 10
+
+transformations:
+  - type: relative-time-shift
+    params:
+      relative_to: "$request_date"
+      date_format: "2006-01-02"
+      target_fields: [ "from", "to" ]
+
+executor:
+  type: http
+  configuration:
+    continue_on_error: true
+    concurrency: 1
+  budget:
+    time: 1m
+  params:
+    timeout: 60s

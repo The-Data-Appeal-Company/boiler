@@ -8,6 +8,7 @@ import (
 	"net/url"
 
 	_ "github.com/lib/pq"
+	_ "github.com/trinodb/trino-go-client/trino"
 )
 
 const (
